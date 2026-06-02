@@ -112,6 +112,7 @@ export const registerService = async (body: RegisterSchemaType) => {
           "An account with this email already exists. Please sign in instead.",
           ErrorCodeEnum.AUTH_EMAIL_ALREADY_EXISTS,
         );
+        return 
       }
 
       if (existingUser && !existingUser.isVerified) {
@@ -131,20 +132,9 @@ export const registerService = async (body: RegisterSchemaType) => {
         return;
       }
 
-      const user =
-        existingUser || new UserModel({ ...body, isVerified: false });
-
-      if (!existingUser) {
+      const user = new UserModel({ ...body, isVerified: false });
         await user.save({ session });
-      } else {
-        user.set({
-          name: body.name,
-          password: body.password,
-          isVerified: false,
-        });
-        await user.save({ session });
-      }
-
+     
       const otp = await issueVerificationOtp(user, session);
 
       verificationEmailPayload = {
