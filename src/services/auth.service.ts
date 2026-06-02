@@ -112,7 +112,7 @@ export const registerService = async (body: RegisterSchemaType) => {
           "An account with this email already exists. Please sign in instead.",
           ErrorCodeEnum.AUTH_EMAIL_ALREADY_EXISTS,
         );
-        return 
+       
       }
 
       if (existingUser && !existingUser.isVerified) {
