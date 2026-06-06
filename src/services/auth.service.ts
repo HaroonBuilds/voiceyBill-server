@@ -131,20 +131,9 @@ export const registerService = async (body: RegisterSchemaType) => {
         return;
       }
 
-      const user =
-        existingUser || new UserModel({ ...body, isVerified: false });
-
-      if (!existingUser) {
-        await user.save({ session });
-      } else {
-        user.set({
-          name: body.name,
-          password: body.password,
-          isVerified: false,
-        });
-        await user.save({ session });
-      }
-
+      const user = new UserModel({ ...body, isVerified: false });
+      await user.save({ session });
+      
       const otp = await issueVerificationOtp(user, session);
 
       verificationEmailPayload = {
@@ -204,6 +193,8 @@ export const loginService = async (body: LoginSchemaType) => {
     reportSetting,
   };
 };
+
+
 
 export const verifyOtpService = async (body: VerifyOtpSchemaType) => {
   const { email, otp } = body;
