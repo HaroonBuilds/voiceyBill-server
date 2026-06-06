@@ -174,6 +174,13 @@ export const loginService = async (body: LoginSchemaType) => {
   const user = await UserModel.findOne({ email });
   if (!user) throw new NotFoundException("Email/password not found");
 
+  const isPasswordValid = await user.comparePassword(password);
+
+  if (!isPasswordValid) {
+    throw new UnauthorizedException("Invalid email/password");
+  }
+
+
   if (user.isVerified === false) {
     throw new UnauthorizedException(
       "Account is not verified. Please verify your email first.",
@@ -181,11 +188,7 @@ export const loginService = async (body: LoginSchemaType) => {
     );
   }
 
-  const isPasswordValid = await user.comparePassword(password);
-
-  if (!isPasswordValid) {
-    throw new UnauthorizedException("Invalid email/password");
-  }
+  
 
   const { token, expiresAt } = signJwtToken({ userId: user.id });
 
